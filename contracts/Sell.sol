@@ -13,7 +13,7 @@ contract Sell is LotteryFactory {
 
     mapping(uint256 => PoliticOnSale) internal politicsOnSale;
 
-    uint256 internal fee = 5;
+    uint256 internal feeSale = 5;
 
     function forSale(uint256 _tokenId, uint256 _price)
         public
@@ -51,7 +51,7 @@ contract Sell is LotteryFactory {
         require(msg.value == politicsOnSale[_tokenId].price / decimal * 10e18, "Incorrect amount");
 
         // get 5% of fee
-        feeCost = msg.value * fee / 100;
+        feeCost = msg.value * feeSale / 100;
         amountOwner = msg.value - feeCost;
         ownerAddress.transfer(feeCost);
         politicsOnSale[_tokenId].owner.transfer(amountOwner);
