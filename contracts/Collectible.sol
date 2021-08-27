@@ -25,14 +25,17 @@ contract Collectible is ERC721, Ownable {
 
     mapping(uint256 => PoliticsAvailable) internal politicsAvailable;
     mapping(address => PoliticsOwned[]) internal userOwnedPolitics;
+    mapping(uint256 => address) internal politicToUser;
 
     address payable public ownerAddress;
+    address payable public contractAddress;
 
     uint256 internal tokenCounter = 1;
     uint256 internal decimal = 1000;
 
     constructor() ERC721("PoliticsNft", "POL") {
         ownerAddress = payable(msg.sender);
+        contractAddress = payable(address(this));
     }
 
     function getPolitic(uint256 _id)
@@ -126,6 +129,7 @@ contract Collectible is ERC721, Ownable {
 
 
         userOwnedPolitics[msg.sender].push(politicOwned);
+        politicToUser[id] = msg.sender;
     }
 
 
@@ -158,6 +162,8 @@ contract Collectible is ERC721, Ownable {
                 userOwnedPolitics[to].push(politicsFrom[i]);
             }
         }
+
+        politicToUser[tokenId] = msg.sender;
 
     }
 
