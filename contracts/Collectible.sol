@@ -1,18 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-/**
- * Created on:
- * @summary:
- * @author:
- */
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-/**
- * @title:
- */
 contract Collectible is ERC721, Ownable {
     struct PoliticsAvailable {
         uint256 id;
@@ -36,36 +28,24 @@ contract Collectible is ERC721, Ownable {
 
     address payable public ownerAddress;
 
-    uint256 tokenCounter = 1;
+    uint256 internal tokenCounter = 1;
+    uint256 internal decimal = 1000;
 
-/**
- * @dev:
- * @param  undefined :
- */
     constructor() ERC721("PoliticsNft", "POL") {
         ownerAddress = payable(msg.sender);
     }
 
-
-/**
- * @dev:
- * @param uint256 _id :
- */
     function getPolitic(uint256 _id)
         public
         view
         onlyOwner
         returns(PoliticsAvailable memory)
     {
-        require(politicsAvailable[_id].created, "Cat not found");
+        require(politicsAvailable[_id].created, "Politic not found");
 
         return politicsAvailable[_id];
     }
 
-/**
- * @dev:
- * @param  undefined :
- */
     function getPolitics()
         public
         view
@@ -75,10 +55,6 @@ contract Collectible is ERC721, Ownable {
         return politics;
     }
 
-/**
- * @dev:
- * @param  undefined :
- */
     function getMyPolitics()
         public
         view
@@ -87,14 +63,13 @@ contract Collectible is ERC721, Ownable {
         return userOwnedPolitics[msg.sender];
     }
 
-/**
- * @dev:
- * @param string memory :
- * @param uint256 _id :
- * @param uint256 _qty :
- * @param uint256 _level :
- * @param uint256 _price :
- */
+    function changeDecimal(uint256 _decimal)
+        public
+        onlyOwner
+    {
+        decimal = _decimal;
+    }
+
     function createType(string memory _name, uint256 _id, uint256 _qty, uint256 _level, uint256 _price)
         public
         onlyOwner
@@ -110,11 +85,6 @@ contract Collectible is ERC721, Ownable {
         return politic;
     }
 
-/**
- * @dev:
- * @param uint256 _id :
- * @param uint256 _qty :
- */
     function addQty(uint256 _id, uint256 _qty)
         public
         onlyOwner
@@ -133,8 +103,8 @@ contract Collectible is ERC721, Ownable {
         payable
     {
         require(politicsAvailable[_id].created, "Politic not found");
-        require(politicsAvailable[_id].qty > 0, "There is no more politic available");
-        require(msg.value == 1 ether * politicsAvailable[_id].price, "Incorrect amount");
+        require(politicsAvailable[_id].qty >= 0, "There is no more politic available");
+        require(msg.value != politicsAvailable[_id].price / decimal * 10e18, "Incorrect amount");
         PoliticsAvailable memory politic;
 
         for (uint i = 0; i < politics.length; i++) {
@@ -149,6 +119,7 @@ contract Collectible is ERC721, Ownable {
         tokenCounter++;
 
         _safeMint(msg.sender, id);
+        ownerAddress.transfer(msg.value);
 
         PoliticsOwned memory politicOwned =
             PoliticsOwned({id: id, id_politic: politic.id, owner: msg.sender});
@@ -175,7 +146,6 @@ contract Collectible is ERC721, Ownable {
     ) public override  {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
-
 
         PoliticsOwned[] memory politicsFrom = userOwnedPolitics[from];
         delete userOwnedPolitics[from];
