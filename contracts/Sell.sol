@@ -7,7 +7,7 @@ contract Sell is LotteryFactory {
     struct PoliticOnSale {
         uint256 tokenId;
         uint256 price;
-        address owner
+        address payable owner;
         bool created;
     }
 
@@ -23,7 +23,7 @@ contract Sell is LotteryFactory {
         safeTransferFrom(msg.sender, contractAddress, _tokenId);
 
         PoliticOnSale memory politicOnSale =
-            PoliticOnSale({tokenId: _tokenId, price: _price, owner: msg.sender, created: true});
+            PoliticOnSale({tokenId: _tokenId, price: _price, owner: payable(msg.sender), created: true});
 
         politicsOnSale[_tokenId] = politicOnSale;
 
@@ -31,7 +31,7 @@ contract Sell is LotteryFactory {
         delete userOwnedPolitics[msg.sender];
         for (uint i = 0; i < politicsFrom.length; i++) {
             if (politicsFrom[i].id != _tokenId) {
-                userOwnedPolitics[from].push(politicsFrom[i]);
+                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
 
             } else {
                 politicsFrom[i].owner = contractAddress;
@@ -48,11 +48,11 @@ contract Sell is LotteryFactory {
         payable
     {
         require(politicsOnSale[_tokenId].created, "Politic not for sale");
-        require(msg.value == politicsOnSale[_tokenId].price / decimal * 10e18, "Incorrect amount");
+        require(msg.value == (politicsOnSale[_tokenId].price / 10000) * 10e18, "Incorrect amount");
 
         // get 5% of fee
-        feeCost = msg.value * feeSale / 100;
-        amountOwner = msg.value - feeCost;
+        uint256 feeCost = msg.value * feeSale / 100;
+        uint256 amountOwner = msg.value - feeCost;
         ownerAddress.transfer(feeCost);
         politicsOnSale[_tokenId].owner.transfer(amountOwner);
         safeTransferFrom(contractAddress, msg.sender, _tokenId);
@@ -63,7 +63,7 @@ contract Sell is LotteryFactory {
         delete userOwnedPolitics[contractAddress];
         for (uint i = 0; i < politicsFrom.length; i++) {
             if (politicsFrom[i].id != _tokenId) {
-                userOwnedPolitics[from].push(politicsFrom[i]);
+                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
 
             } else {
                 politicsFrom[i].owner = msg.sender;

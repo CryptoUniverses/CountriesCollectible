@@ -12,6 +12,7 @@ contract Collectible is ERC721, Ownable {
         uint256 level;
         uint256 price;
         string name;
+        bool lottery;
         bool created;
     }
 
@@ -31,7 +32,6 @@ contract Collectible is ERC721, Ownable {
     address payable public contractAddress;
 
     uint256 internal tokenCounter = 1;
-    uint256 internal decimal = 1000;
 
     constructor() ERC721("PoliticsNft", "POL") {
         ownerAddress = payable(msg.sender);
@@ -66,14 +66,7 @@ contract Collectible is ERC721, Ownable {
         return userOwnedPolitics[msg.sender];
     }
 
-    function changeDecimal(uint256 _decimal)
-        public
-        onlyOwner
-    {
-        decimal = _decimal;
-    }
-
-    function createType(string memory _name, uint256 _id, uint256 _qty, uint256 _level, uint256 _price)
+    function createType(string memory _name, uint256 _id, uint256 _qty, uint256 _level, uint256 _price, bool _lottery)
         public
         onlyOwner
         returns (PoliticsAvailable memory)
@@ -81,7 +74,7 @@ contract Collectible is ERC721, Ownable {
         require(!politicsAvailable[_id].created, "id already in use");
 
         PoliticsAvailable memory politic =
-            PoliticsAvailable({name: _name, id: _id, qty: _qty, level: _level, price: _price, created: true});
+            PoliticsAvailable({name: _name, id: _id, qty: _qty, level: _level, price: _price, lottery: _lottery, created: true});
         politics.push(politic);
         politicsAvailable[_id] = politic;
 
@@ -100,14 +93,18 @@ contract Collectible is ERC721, Ownable {
         }
     }
 
+    function you(uint256 _id) public view returns (uint256) {
+        return (uint256(politicsAvailable[_id].price) / 10000) * 10e18;
+    }
 
     function buy(uint256 _id)
         external
         payable
     {
         require(politicsAvailable[_id].created, "Politic not found");
-        require(politicsAvailable[_id].qty >= 0, "There is no more politic available");
-        require(msg.value != politicsAvailable[_id].price / decimal * 10e18, "Incorrect amount");
+        require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
+        require(politicsAvailable[_id].qty > 0, "There is no more politic available");
+        require(msg.value == (politicsAvailable[_id].price / 10000) * 10e18, "Incorrect amount");
         PoliticsAvailable memory politic;
 
         for (uint i = 0; i < politics.length; i++) {
