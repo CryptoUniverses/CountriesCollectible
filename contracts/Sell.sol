@@ -26,7 +26,7 @@ contract Sell is Collectible {
     function forSale(uint256 _tokenId, uint256 _price) public {
         require(politicToUser[_tokenId] == msg.sender, "You are not the owner of the token");
 
-        ERC721.transferFrom(msg.sender, contractAddress, _tokenId);
+        ERC721.safeTransferFrom(msg.sender, contractAddress, _tokenId);
 
         PoliticOnSale memory politicOnSale =
             PoliticOnSale({tokenId: _tokenId, price: _price, owner: payable(msg.sender), created: true});

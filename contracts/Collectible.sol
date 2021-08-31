@@ -3,13 +3,14 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
 * @title ERC721 collectible base methods
 * @author Youness Chetoui
 */
-contract Collectible is ERC721, Ownable {
+contract Collectible is ERC721, ERC721Holder, Ownable {
     struct PoliticsAvailable {
         uint256 id;
         uint256 qty;
