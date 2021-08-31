@@ -34,17 +34,7 @@ contract Sell is LotteryFactory {
         politicsOnSale[_tokenId] = politicOnSale;
 
         // Update politicsOwned and transfer politician for sale to contract
-        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[msg.sender];
-        delete userOwnedPolitics[msg.sender];
-        for (uint i = 0; i < politicsFrom.length; i++) {
-            if (politicsFrom[i].id != _tokenId) {
-                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
-
-            } else {
-                politicsFrom[i].owner = contractAddress;
-                userOwnedPolitics[contractAddress].push(politicsFrom[i]);
-            }
-        }
+        _updateOwner(msg.sender, contractAddress, _tokenId);
 
         delete userOwnedPolitics[politicToUser[_tokenId]];
         delete politicToUser[_tokenId];
@@ -57,13 +47,12 @@ contract Sell is LotteryFactory {
     function buyPoliticsForSale(uint256 _tokenId) public payable {
         require(politicsOnSale[_tokenId].created, "Politician not for sale");
         require(msg.sender != politicsOnSale[_tokenId].owner, "Your politician");
-        require(msg.value == (politicsOnSale[_tokenId].price * 10**18) / 1000, "Incorrect amount");
 
-        // get 5% of fee
-        uint256 feeCost = msg.value * feeSale / 100;
-        uint256 amountOwner = msg.value - feeCost;
+        (cost,feeCost) =_calculateCost(politicsOnSale[_tokenId].price, true)
+        require(msg.value == feeCost + cost, "Incorrect amount");
+
         ownerAddress.transfer(feeCost);
-        politicsOnSale[_tokenId].owner.transfer(amountOwner);
+        politicsOnSale[_tokenId].owner.transfer(cost);
 
         // transfer collectible from contract to buyer
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
@@ -72,19 +61,7 @@ contract Sell is LotteryFactory {
         delete politicsOnSale[_tokenId];
 
         // Update politician Owned
-        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[contractAddress];
-        delete userOwnedPolitics[contractAddress];
-        for (uint i = 0; i < politicsFrom.length; i++) {
-            if (politicsFrom[i].id != _tokenId) {
-                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
-
-            } else {
-                politicsFrom[i].owner = msg.sender;
-                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
-            }
-        }
-
-        politicToUser[_tokenId] = msg.sender;
+        _updateOwner(contractAddress, msg.sender, _tokenId);
     }
 
     /**
@@ -97,22 +74,10 @@ contract Sell is LotteryFactory {
         // transfer collectible from contract to buyer
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
+        // Update politician Owned
+        _updateOwner(contractAddress, msg.sender, _tokenId);
+
         // Delete onSale
         delete politicsOnSale[_tokenId];
-
-        // Update politician Owned
-        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[contractAddress];
-        delete userOwnedPolitics[contractAddress];
-        for (uint i = 0; i < politicsFrom.length; i++) {
-            if (politicsFrom[i].id != _tokenId) {
-                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
-
-            } else {
-                politicsFrom[i].owner = msg.sender;
-                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
-            }
-        }
-
-        politicToUser[_tokenId] = msg.sender;
     }
 }
