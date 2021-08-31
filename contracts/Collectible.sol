@@ -165,18 +165,26 @@ contract Collectible is ERC721, ERC721Holder, Ownable {
         _safeTransfer(from, to, tokenId, _data);
 
         //Update owner of politics
-        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[from];
-        delete userOwnedPolitics[from];
+        _updatePoliticsOwned(from, to, tokenId);
+    }
+
+    /**
+    * @notice Update the politician owned
+    * @param _from, _to, _tokenId
+    */
+    function _updatePoliticsOwned(address _from, address _to, uint256 _tokenId) internal {
+        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[_from];
+        delete userOwnedPolitics[_from];
         for (uint i = 0; i < politicsFrom.length; i++) {
-            if (politicsFrom[i].id != tokenId) {
-                userOwnedPolitics[from].push(politicsFrom[i]);
+            if (politicsFrom[i].id != _tokenId) {
+                userOwnedPolitics[_from].push(politicsFrom[i]);
 
             } else {
-                politicsFrom[i].owner = to;
-                userOwnedPolitics[to].push(politicsFrom[i]);
+                politicsFrom[i].owner = _to;
+                userOwnedPolitics[_to].push(politicsFrom[i]);
             }
         }
 
-        politicToUser[tokenId] = msg.sender;
+        politicToUser[_tokenId] = _to;
     }
 }
