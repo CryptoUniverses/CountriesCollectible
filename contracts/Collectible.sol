@@ -93,10 +93,6 @@ contract Collectible is ERC721, Ownable {
         }
     }
 
-    function you(uint256 _id) public view returns (uint256) {
-        return (uint256(politicsAvailable[_id].price) / 10000) * 10e18;
-    }
-
     function buy(uint256 _id)
         external
         payable
@@ -104,7 +100,7 @@ contract Collectible is ERC721, Ownable {
         require(politicsAvailable[_id].created, "Politic not found");
         require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
         require(politicsAvailable[_id].qty > 0, "There is no more politic available");
-        require(msg.value == (politicsAvailable[_id].price / 10000) * 10e18, "Incorrect amount");
+        require(msg.value == (politicsAvailable[_id].price * 10e18) / 1000, "Incorrect amount");
         PoliticsAvailable memory politic;
 
         for (uint i = 0; i < politics.length; i++) {
@@ -137,7 +133,6 @@ contract Collectible is ERC721, Ownable {
     ) public override onlyOwner {
         //do nothing
     }
-
 
     function safeTransferFrom(
         address from,

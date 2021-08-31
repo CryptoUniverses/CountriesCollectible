@@ -48,14 +48,14 @@ contract Sell is LotteryFactory {
         payable
     {
         require(politicsOnSale[_tokenId].created, "Politic not for sale");
-        require(msg.value == (politicsOnSale[_tokenId].price / 10000) * 10e18, "Incorrect amount");
+        require(msg.value == (politicsOnSale[_tokenId].price * 10e18) / 10000, "Incorrect amount");
 
         // get 5% of fee
         uint256 feeCost = msg.value * feeSale / 100;
         uint256 amountOwner = msg.value - feeCost;
         ownerAddress.transfer(feeCost);
         politicsOnSale[_tokenId].owner.transfer(amountOwner);
-        safeTransferFrom(contractAddress, msg.sender, _tokenId);
+        this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
         delete politicsOnSale[_tokenId];
 
