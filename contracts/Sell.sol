@@ -80,6 +80,10 @@ contract Sell is Collectible {
         delete politicsOnSale[_tokenId];
     }
 
+    /**
+    * @notice Update the politician owned
+    * @param _from, _to, _tokenId
+    */
     function _updatePoliticsOwned(address _from, address _to, uint256 _tokenId, bool deleteSale) private {
         PoliticsOwned[] memory politicsFrom = userOwnedPolitics[_from];
         delete userOwnedPolitics[_from];
