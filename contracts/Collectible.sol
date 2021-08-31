@@ -110,7 +110,7 @@ contract Collectible is ERC721, ERC721Holder, Ownable {
     * @notice Buy politician
     * @param _id of politician available
     */
-    function buy(uint256 _id) external payable {
+    function buy(uint256 _id, bool _isLottery) external payable {
         require(politicsAvailable[_id].created, "Politic not found");
         require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
         require(politicsAvailable[_id].qty > 0, "There is no more politic available");
