@@ -113,9 +113,7 @@ contract Collectible is ERC721, Ownable {
         require(politicsAvailable[_id].created, "Politic not found");
         require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
         require(politicsAvailable[_id].qty > 0, "There is no more politic available");
-
-        (cost,) =_calculateCost(politicsOnSale[_tokenId].price, false)
-        require(msg.value == cost, "Incorrect amount");
+        require(msg.value == (politicsAvailable[_id].price * 10**18) / 1000, "Incorrect amount");
         PoliticsAvailable memory politic;
 
         for (uint i = 0; i < politics.length; i++) {
@@ -130,7 +128,7 @@ contract Collectible is ERC721, Ownable {
         tokenCounter++;
 
         _safeMint(msg.sender, id);
-        ownerAddress.transfer(cost);
+        ownerAddress.transfer(msg.value);
 
         PoliticsOwned memory politicOwned =
             PoliticsOwned({id: id, id_politic: politic.id, owner: msg.sender});
@@ -165,7 +163,19 @@ contract Collectible is ERC721, Ownable {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
 
-        // Update politician Owned
-        _updateOwner(msg.sender, to, _tokenId);
+        //Update owner of politics
+        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[from];
+        delete userOwnedPolitics[from];
+        for (uint i = 0; i < politicsFrom.length; i++) {
+            if (politicsFrom[i].id != tokenId) {
+                userOwnedPolitics[from].push(politicsFrom[i]);
+
+            } else {
+                politicsFrom[i].owner = to;
+                userOwnedPolitics[to].push(politicsFrom[i]);
+            }
+        }
+
+        politicToUser[tokenId] = msg.sender;
     }
 }
