@@ -20,20 +20,20 @@ contract Sell is LotteryFactory {
     uint256 internal feeSale = 5;
 
     /**
-    * @notice Up for sale of owned politic
-    * @param tokenId of politic owned and price wished
+    * @notice Up for sale of owned politician
+    * @param _tokenId of politician owned and _price wished
     */
     function forSale(uint256 _tokenId, uint256 _price) public {
         require(politicToUser[_tokenId] == msg.sender, "You are not the owner of the token");
 
-        safeTransferFrom(msg.sender, contractAddress, _tokenId);
+        ERC721.safeTransferFrom(msg.sender, contractAddress, _tokenId);
 
         PoliticOnSale memory politicOnSale =
             PoliticOnSale({tokenId: _tokenId, price: _price, owner: payable(msg.sender), created: true});
 
         politicsOnSale[_tokenId] = politicOnSale;
 
-        // Update politicsOwned and transfer politic for sale to contract
+        // Update politicsOwned and transfer politician for sale to contract
         PoliticsOwned[] memory politicsFrom = userOwnedPolitics[msg.sender];
         delete userOwnedPolitics[msg.sender];
         for (uint i = 0; i < politicsFrom.length; i++) {
@@ -51,12 +51,13 @@ contract Sell is LotteryFactory {
     }
 
     /**
-    * @notice Buy politics
-    * @param tokenId of politic for sale
+    * @notice Buy politician
+    * @param _tokenId of politician for sale
     */
     function buyPoliticsForSale(uint256 _tokenId) public payable {
-        require(politicsOnSale[_tokenId].created, "Politic not for sale");
-        require(msg.value == (politicsOnSale[_tokenId].price * 10e18) / 10000, "Incorrect amount");
+        require(politicsOnSale[_tokenId].created, "Politician not for sale");
+        require(msg.sender != politicsOnSale[_tokenId].owner, "Your politician");
+        require(msg.value == (politicsOnSale[_tokenId].price * 10**18) / 1000, "Incorrect amount");
 
         // get 5% of fee
         uint256 feeCost = msg.value * feeSale / 100;
@@ -67,9 +68,39 @@ contract Sell is LotteryFactory {
         // transfer collectible from contract to buyer
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
-        // Update politic owned
+        // Delete onSale
         delete politicsOnSale[_tokenId];
 
+        // Update politician Owned
+        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[contractAddress];
+        delete userOwnedPolitics[contractAddress];
+        for (uint i = 0; i < politicsFrom.length; i++) {
+            if (politicsFrom[i].id != _tokenId) {
+                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
+
+            } else {
+                politicsFrom[i].owner = msg.sender;
+                userOwnedPolitics[msg.sender].push(politicsFrom[i]);
+            }
+        }
+
+        politicToUser[_tokenId] = msg.sender;
+    }
+
+    /**
+    * @notice Cancel the sell of politician
+    * @param _tokenId of politician for sale
+    */
+    function cancelSell(uint256 _tokenId) public {
+        require(msg.sender == politicsOnSale[_tokenId].owner, "Not your politician");
+
+        // transfer collectible from contract to buyer
+        this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
+
+        // Delete onSale
+        delete politicsOnSale[_tokenId];
+
+        // Update politician Owned
         PoliticsOwned[] memory politicsFrom = userOwnedPolitics[contractAddress];
         delete userOwnedPolitics[contractAddress];
         for (uint i = 0; i < politicsFrom.length; i++) {
