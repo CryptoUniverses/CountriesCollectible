@@ -128,8 +128,8 @@ contract Collectible is ERC721, ERC721Holder, Ownable {
         uint256 id = uint256(keccak256(abi.encodePacked(tokenCounter, msg.sender))) % 10000000000;
         tokenCounter++;
 
-        _safeMint(msg.sender, id);
         ownerAddress.transfer(msg.value);
+        _safeMint(msg.sender, id);
 
         PoliticsOwned memory politicOwned =
             PoliticsOwned({id: id, id_politic: politic.id, owner: msg.sender});
