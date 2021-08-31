@@ -5,6 +5,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/**
+* @title ERC721 collectible base methods
+* @author Youness Chetoui
+*/
 contract Collectible is ERC721, Ownable {
     struct PoliticsAvailable {
         uint256 id;
@@ -38,39 +42,45 @@ contract Collectible is ERC721, Ownable {
         contractAddress = payable(address(this));
     }
 
-    function getPolitic(uint256 _id)
-        public
-        view
-        onlyOwner
-        returns(PoliticsAvailable memory)
-    {
+    /**
+    * @notice get politic available by id
+    * @param id of politic
+    * @return struct PoliticsAvailable
+    */
+    function getPolitic(uint256 _id) public view onlyOwner returns(PoliticsAvailable memory) {
         require(politicsAvailable[_id].created, "Politic not found");
-
         return politicsAvailable[_id];
     }
 
-    function getPolitics()
-        public
-        view
-        onlyOwner
-        returns (PoliticsAvailable[] memory)
-    {
+    /**
+    * @notice get list of all politics available
+    * @return Array of struct PoliticsAvailable
+    */
+    function getPolitics() public view onlyOwner returns (PoliticsAvailable[] memory) {
         return politics;
     }
 
-    function getMyPolitics()
-        public
-        view
-        returns (PoliticsOwned[] memory)
-    {
+    /**
+    * @notice Get politics by user
+    * @return array of struct PoliticsOwned
+    */
+    function getMyPolitics() public view returns (PoliticsOwned[] memory) {
         return userOwnedPolitics[msg.sender];
     }
 
-    function createType(string memory _name, uint256 _id, uint256 _qty, uint256 _level, uint256 _price, bool _lottery)
-        public
-        onlyOwner
-        returns (PoliticsAvailable memory)
-    {
+    /**
+    * @notice Create politic
+    * @param name, id, qty, level, price and lottery of politic available
+    * @return PoliticsAvailable created
+    */
+    function createType(
+        string memory _name,
+        uint256 _id, uint256 _qty,
+        uint256 _level,
+        uint256 _price,
+        bool _lottery
+    )
+        public onlyOwner returns (PoliticsAvailable memory) {
         require(!politicsAvailable[_id].created, "id already in use");
 
         PoliticsAvailable memory politic =
@@ -81,10 +91,11 @@ contract Collectible is ERC721, Ownable {
         return politic;
     }
 
-    function addQty(uint256 _id, uint256 _qty)
-        public
-        onlyOwner
-    {
+    /**
+    * @notice Add quantity for a PoliticsAvailable
+    * @param id of PoliticsAvailable and qty wished
+    */
+    function addQty(uint256 _id, uint256 _qty) public onlyOwner {
         for (uint i = 0; i < politics.length; i++) {
             if (politics[i].id == _id && politics[i].qty < _qty) {
                 politics[i].qty = _qty;
@@ -93,10 +104,12 @@ contract Collectible is ERC721, Ownable {
         }
     }
 
-    function buy(uint256 _id)
-        external
-        payable
-    {
+    /**
+    * @notice Create politic
+    * @param name, id, qty, level, price and lottery of politic available
+    * @return PoliticsAvailable created
+    */
+    function buy(uint256 _id) external payable {
         require(politicsAvailable[_id].created, "Politic not found");
         require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
         require(politicsAvailable[_id].qty > 0, "There is no more politic available");
@@ -126,6 +139,9 @@ contract Collectible is ERC721, Ownable {
     }
 
 
+    /**
+    * @notice Disabled not safe transform
+    */
     function transferFrom(
         address from,
         address to,
@@ -134,6 +150,10 @@ contract Collectible is ERC721, Ownable {
         //do nothing
     }
 
+    /**
+    * @notice Transfer Politic
+    * @param address of nft to trasnfer, address of receveir and tokenId of PoliticsOwned
+    */
     function safeTransferFrom(
         address from,
         address to,
@@ -143,6 +163,7 @@ contract Collectible is ERC721, Ownable {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
 
+        //Update owner of politics
         PoliticsOwned[] memory politicsFrom = userOwnedPolitics[from];
         delete userOwnedPolitics[from];
         for (uint i = 0; i < politicsFrom.length; i++) {
@@ -156,7 +177,5 @@ contract Collectible is ERC721, Ownable {
         }
 
         politicToUser[tokenId] = msg.sender;
-
     }
-
 }

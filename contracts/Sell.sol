@@ -3,6 +3,10 @@
 pragma solidity ^0.8.0;
 import "./LotteryFactory.sol";
 
+/**
+* @title Base function of sell ERC721
+* @author Youness Chetoui
+*/
 contract Sell is LotteryFactory {
     struct PoliticOnSale {
         uint256 tokenId;
@@ -15,9 +19,11 @@ contract Sell is LotteryFactory {
 
     uint256 internal feeSale = 5;
 
-    function forSale(uint256 _tokenId, uint256 _price)
-        public
-    {
+    /**
+    * @notice Up for sale of owned politic
+    * @param tokenId of politic owned and price wished
+    */
+    function forSale(uint256 _tokenId, uint256 _price) public {
         require(politicToUser[_tokenId] == msg.sender, "You are not the owner of the token");
 
         safeTransferFrom(msg.sender, contractAddress, _tokenId);
@@ -27,6 +33,7 @@ contract Sell is LotteryFactory {
 
         politicsOnSale[_tokenId] = politicOnSale;
 
+        // Update politicsOwned and transfer politic for sale to contract
         PoliticsOwned[] memory politicsFrom = userOwnedPolitics[msg.sender];
         delete userOwnedPolitics[msg.sender];
         for (uint i = 0; i < politicsFrom.length; i++) {
@@ -43,10 +50,11 @@ contract Sell is LotteryFactory {
         delete politicToUser[_tokenId];
     }
 
-    function buyPoliticsForSale(uint256 _tokenId)
-        public
-        payable
-    {
+    /**
+    * @notice Buy politics
+    * @param tokenId of politic for sale
+    */
+    function buyPoliticsForSale(uint256 _tokenId) public payable {
         require(politicsOnSale[_tokenId].created, "Politic not for sale");
         require(msg.value == (politicsOnSale[_tokenId].price * 10e18) / 10000, "Incorrect amount");
 
@@ -55,8 +63,11 @@ contract Sell is LotteryFactory {
         uint256 amountOwner = msg.value - feeCost;
         ownerAddress.transfer(feeCost);
         politicsOnSale[_tokenId].owner.transfer(amountOwner);
+
+        // transfer collectible from contract to buyer
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
+        // Update politic owned
         delete politicsOnSale[_tokenId];
 
         PoliticsOwned[] memory politicsFrom = userOwnedPolitics[contractAddress];
