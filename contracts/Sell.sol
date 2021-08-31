@@ -17,6 +17,7 @@ contract Sell is Collectible {
 
     mapping(uint256 => PoliticOnSale) internal politicsOnSale;
 
+    uint256[] public arrayPoliticiansOnSale;
     uint256 internal feeSale = 5;
 
     /**
@@ -34,7 +35,7 @@ contract Sell is Collectible {
         politicsOnSale[_tokenId] = politicOnSale;
 
         // Update politicsOwned and transfer politician for sale to contract
-        _updatePoliticsOwned(msg.sender, contractAddress, _tokenId);
+        _updatePoliticsOwned(msg.sender, contractAddress, _tokenId, false);
     }
 
     /**
@@ -59,7 +60,7 @@ contract Sell is Collectible {
         delete politicsOnSale[_tokenId];
 
         // Update politician Owned
-        _updatePoliticsOwned(contractAddress, msg.sender, _tokenId);
+        _updatePoliticsOwned(contractAddress, msg.sender, _tokenId, true);
     }
 
     /**
@@ -73,13 +74,13 @@ contract Sell is Collectible {
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
         // Update politician Owned
-        _updatePoliticsOwned(contractAddress, msg.sender, _tokenId);
+        _updatePoliticsOwned(contractAddress, msg.sender, _tokenId, true);
 
         // Delete onSale
         delete politicsOnSale[_tokenId];
     }
 
-    function _updatePoliticsOwned(address _from, address _to, uint256 _tokenId) private {
+    function _updatePoliticsOwned(address _from, address _to, uint256 _tokenId, bool deleteSale) private {
         PoliticsOwned[] memory politicsFrom = userOwnedPolitics[_from];
         delete userOwnedPolitics[_from];
         for (uint i = 0; i < politicsFrom.length; i++) {
@@ -90,6 +91,16 @@ contract Sell is Collectible {
                 politicsFrom[i].owner = _to;
                 userOwnedPolitics[_to].push(politicsFrom[i]);
             }
+        }
+
+        if (deleteSale) {
+            for (uint i = 0; i < arrayPoliticiansOnSale.length; i++) {
+                if (arrayPoliticiansOnSale[i] == _tokenId) {
+                    delete arrayPoliticiansOnSale[i];
+                }
+            }
+        } else {
+            arrayPoliticiansOnSale.push(_tokenId);
         }
 
         politicToUser[_tokenId] = _to;
