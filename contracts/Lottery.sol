@@ -13,12 +13,12 @@ contract Lottery is Sell {
         uint256 id_politics;
         uint256 end_time;
         uint256 price;
-        uint256 nbPlayer;
+        uint256 nb_player;
         uint256 ticket_available;
         bool created;
     }
 
-    mapping(uint256 => address[]) public userPlayedLottery;
+    mapping(uint256 => address[]) internal userPlayedLottery;
     mapping(uint256 => LotteryAvailable) internal lotteryAvailable;
 
     uint256[] public arrayLotteryAvailable;
@@ -32,15 +32,24 @@ contract Lottery is Sell {
     ) public onlyOwner {
         require(politicsAvailable[_id_politics].lottery, "Politic not available in lottery");
         require(!lotteryAvailable[_id].created, "Lottery already exist");
-        require(block.timestamp > _end_time, "End time is in past");
+        require(block.timestamp < _end_time, "End time is in past");
         require(_price > 0, "Price is 0");
         require(_ticket_available >= 50, "Ticket availible under 50");
 
         LotteryAvailable memory lottery =
-            LotteryAvailable({id: _id, id_politics: _id_politics, end_time: _end_time, price: _price, ticket_available: _ticket_available, nbPlayer: 0, created: true});
+            LotteryAvailable({id: _id, id_politics: _id_politics, end_time: _end_time, price: _price, ticket_available: _ticket_available, nb_player: 0, created: true});
 
         arrayLotteryAvailable.push(lottery.id);
         lotteryAvailable[_id] = lottery;
+    }
+
+    function getlotteryAvailable()public view onlyOwner returns(LotteryAvailable[] memory) {
+        LotteryAvailable[] memory lottery;
+        for(uint256 i; i < arrayLotteryAvailable.length; i++) {
+            lottery.push(lotteryAvailable[arrayLotteryAvailable[i]]);
+        }
+
+        return lottery;
     }
 
     function playLottery(uint256 _id) public payable {
@@ -56,17 +65,18 @@ contract Lottery is Sell {
 
         ownerAddress.transfer(msg.value);
         userPlayedLottery[_id].push(msg.sender);
-        lotteryAvailable[_id].nbPlayer++;
+        lotteryAvailable[_id].nb_player++;
         lotteryAvailable[_id].ticket_available--;
     }
 
     function onEndLottery(uint256 _id) public onlyOwner {
-        // prendre une address au hasard parmit les joueur
         require(lotteryAvailable[_id].created, "Lottery not available");
-        require(block.timestamp >= lotteryAvailable[_id].end_time, "Lottery not finished");
+        require(block.timestamp > lotteryAvailable[_id].end_time, "Lottery not finished");
 
         uint256 id_politics = lotteryAvailable[_id].id_politics;
-        address memory winner;
+        uint256 randomIndex = uint256(keccak256(abi.encodePacked(block.timestamp, _id, id_politics))) % userPlayedLottery[_id].length;
+        address winner = userPlayedLottery[_id][randomIndex];
+
         PoliticsAvailable memory politic;
 
         for (uint i = 0; i < politics.length; i++) {
@@ -84,7 +94,6 @@ contract Lottery is Sell {
 
         PoliticsOwned memory politicOwned =
             PoliticsOwned({id: id, id_politic: id_politics, owner: winner});
-
 
         userOwnedPolitics[winner].push(politicOwned);
         politicToUser[id] = winner;

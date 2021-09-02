@@ -33,10 +33,8 @@ contract Sell is Collectible {
             PoliticOnSale({tokenId: _tokenId, price: _price, owner: payable(msg.sender), created: true});
 
         politicsOnSale[_tokenId] = politicOnSale;
-        // Update politicsOwned and transfer politician for sale to contract
-        _updatePoliticsOwned(msg.sender, contractAddress, _tokenId);
-        _updatePoliticianOnSale(_tokenId, true);
 
+        _updatePoliticianOnSale(_tokenId, true);
     }
 
     /**
@@ -57,8 +55,6 @@ contract Sell is Collectible {
         // transfer collectible from contract to buyer
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
-        // Update politician Owned
-        _updatePoliticsOwned(contractAddress, msg.sender, _tokenId);
         // Delete onSale
         _updatePoliticianOnSale(_tokenId, true);
     }
@@ -67,14 +63,15 @@ contract Sell is Collectible {
     * @notice Cancel the sell of politician
     * @param _tokenId of politician for sale
     */
-    function cancelSell(uint256 _tokenId) public {
+    function cancelSell(uint256 _tokenId) public payable {
         require(msg.sender == politicsOnSale[_tokenId].owner, "Not your politician");
+        uint256 feeCost = ((politicsOnSale[_tokenId].price * 10**18) / 1000) * feeSale /100;
+        require(msg.value == feeCost, "Incorrect amount");
 
+        ownerAddress.transfer(feeCost);
         // transfer collectible from contract to buyer
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
-        // Update politician Owned
-        _updatePoliticsOwned(contractAddress, msg.sender, _tokenId);
         // Delete onSale
         _updatePoliticianOnSale(_tokenId, true);
     }

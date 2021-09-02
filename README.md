@@ -8,6 +8,12 @@ ERC721 collectible based on the most famous real or fictitious politicians
  - Play lottery
  - transfer
 
+## TODO
+ - Gestion evenement
+ - Refacto
+ - Test
+ - Front
+
 ## Dev Memo
 
 ```bash

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 * @title ERC721 collectible base methods
 * @author Youness Chetoui
 */
-contract Collectible is ERC721, ERC721Holder, Ownable {
+contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
     struct PoliticsAvailable {
         uint256 id;
         uint256 qty;
@@ -108,13 +108,13 @@ contract Collectible is ERC721, ERC721Holder, Ownable {
 
     /**
     * @notice Buy politician
-    * @param _id of politician available
+    * @param _id, _tokenUri of politician available
     */
-    function buy(uint256 _id, bool _isLottery) external payable {
+    function buy(uint256 _id, string memory _tokenUri) external payable {
         require(politicsAvailable[_id].created, "Politic not found");
         require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
         require(politicsAvailable[_id].qty > 0, "There is no more politic available");
-        require(msg.value == (politicsAvailable[_id].price * 10**18) / 1000, "Incorrect amount");
+        require(msg.value == ((politicsAvailable[_id].price * 10**18) / 1000), "Incorrect amount");
         PoliticsAvailable memory politic;
 
         for (uint i = 0; i < politics.length; i++) {
@@ -130,10 +130,10 @@ contract Collectible is ERC721, ERC721Holder, Ownable {
 
         ownerAddress.transfer(msg.value);
         _safeMint(msg.sender, id);
+        _setTokenURI(id, _tokenUri);
 
         PoliticsOwned memory politicOwned =
             PoliticsOwned({id: id, id_politic: politic.id, owner: msg.sender});
-
 
         userOwnedPolitics[msg.sender].push(politicOwned);
         politicToUser[id] = msg.sender;
@@ -151,40 +151,23 @@ contract Collectible is ERC721, ERC721Holder, Ownable {
         //do nothing
     }
 
-    /**
-    * @notice Transfer Politic
-    * @param from politician wallet address, to wallet address of receiver, tokenId of politician to transfer, _data
-    */
-    function safeTransferFrom(
+    function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 tokenId,
-        bytes memory _data
-    ) public override  {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
-        _safeTransfer(from, to, tokenId, _data);
-
-        //Update owner of politics
-        _updatePoliticsOwned(from, to, tokenId);
-    }
-
-    /**
-    * @notice Update the politician owned
-    * @param _from, _to, _tokenId
-    */
-    function _updatePoliticsOwned(address _from, address _to, uint256 _tokenId) internal {
-        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[_from];
-        delete userOwnedPolitics[_from];
+        uint256 tokenId
+    ) internal override {
+        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[from];
+        delete userOwnedPolitics[from];
         for (uint i = 0; i < politicsFrom.length; i++) {
-            if (politicsFrom[i].id != _tokenId) {
-                userOwnedPolitics[_from].push(politicsFrom[i]);
+            if (politicsFrom[i].id != tokenId) {
+                userOwnedPolitics[from].push(politicsFrom[i]);
 
             } else {
-                politicsFrom[i].owner = _to;
-                userOwnedPolitics[_to].push(politicsFrom[i]);
+                politicsFrom[i].owner = to;
+                userOwnedPolitics[to].push(politicsFrom[i]);
             }
         }
 
-        politicToUser[_tokenId] = _to;
+        politicToUser[tokenId] = to;
     }
 }
