@@ -23,6 +23,10 @@ contract Lottery is Sell {
 
     uint256[] public arrayLotteryAvailable;
 
+    /**
+    * @notice Create lottery
+    * @param _id, _id_politics, _end_time, _price, _ticket_available
+    */
     function createLottery(
         uint256 _id,
         uint256 _id_politics,
@@ -43,20 +47,15 @@ contract Lottery is Sell {
         lotteryAvailable[_id] = lottery;
     }
 
-    function getlotteryAvailable()public view onlyOwner returns(LotteryAvailable[] memory) {
-        LotteryAvailable[] memory lottery;
-        for(uint256 i; i < arrayLotteryAvailable.length; i++) {
-            lottery.push(lotteryAvailable[arrayLotteryAvailable[i]]);
-        }
-
-        return lottery;
-    }
-
+    /**
+    * @notice Play lottery
+    * @param _id of lottery
+    */
     function playLottery(uint256 _id) public payable {
         require(msg.value == (lotteryAvailable[_id].price * 10**18) / 1000, "Incorrect amount");
-        require(lotteryAvailable[_id].created, "Lottery not available");
+        require(lotteryAvailable[_id].created, "Lottery not found");
         require(lotteryAvailable[_id].end_time > block.timestamp, "Lottery not available");
-        require(lotteryAvailable[_id].ticket_available > 0, "Lottery not available");
+        require(lotteryAvailable[_id].ticket_available > 0, "No more ticket available");
 
         address[] memory users = userPlayedLottery[_id];
         for (uint i = 0; i < users.length; i++) {
@@ -69,6 +68,10 @@ contract Lottery is Sell {
         lotteryAvailable[_id].ticket_available--;
     }
 
+    /**
+    * @notice End lottery
+    * @param _id of lottery
+    */
     function onEndLottery(uint256 _id) public onlyOwner {
         require(lotteryAvailable[_id].created, "Lottery not available");
         require(block.timestamp > lotteryAvailable[_id].end_time, "Lottery not finished");

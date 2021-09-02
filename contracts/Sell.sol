@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
-import "./Collectible.sol";
+import "./CollectibleUtils.sol";
 
 /**
 * @title Base function of sell ERC721
 * @author Youness Chetoui
 */
-contract Sell is Collectible {
+contract Sell is CollectibleUtils {
     struct PoliticOnSale {
         uint256 tokenId;
         uint256 price;
