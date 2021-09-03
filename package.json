@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/CryptoUniverses/PoliticsCollectible#readme",
   "dependencies": {
+    "@chainlink/contracts": "^0.2.1",
     "@openzeppelin/contracts": "^4.3.0"
   }
 }

@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.4+commit.c7e474f2"
+		"version": "0.8.7+commit.e28d00a7"
 	},
 	"language": "Solidity",
 	"output": {
@@ -138,6 +138,44 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "arrayLotteryAvailable",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "arrayPoliticiansOnSale",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
 						"name": "owner",
 						"type": "address"
@@ -160,11 +198,55 @@
 						"internalType": "uint256",
 						"name": "_id",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_tokenUri",
+						"type": "string"
 					}
 				],
 				"name": "buy",
 				"outputs": [],
 				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "buyPoliticsForSale",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "cancelSell",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "contractAddress",
+				"outputs": [
+					{
+						"internalType": "address payable",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -193,9 +275,14 @@
 						"internalType": "uint256",
 						"name": "_price",
 						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "_lottery",
+						"type": "bool"
 					}
 				],
-				"name": "createType",
+				"name": "create",
 				"outputs": [
 					{
 						"components": [
@@ -226,6 +313,11 @@
 							},
 							{
 								"internalType": "bool",
+								"name": "lottery",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
 								"name": "created",
 								"type": "bool"
 							}
@@ -235,6 +327,57 @@
 						"type": "tuple"
 					}
 				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_id_politics",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_end_time",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_price",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_ticket_available",
+						"type": "uint256"
+					}
+				],
+				"name": "createLottery",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_price",
+						"type": "uint256"
+					}
+				],
+				"name": "forSale",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -288,57 +431,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "_id",
-						"type": "uint256"
-					}
-				],
-				"name": "getPolitic",
-				"outputs": [
-					{
-						"components": [
-							{
-								"internalType": "uint256",
-								"name": "id",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "qty",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "level",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "price",
-								"type": "uint256"
-							},
-							{
-								"internalType": "string",
-								"name": "name",
-								"type": "string"
-							},
-							{
-								"internalType": "bool",
-								"name": "created",
-								"type": "bool"
-							}
-						],
-						"internalType": "struct Collectible.PoliticsAvailable",
-						"name": "",
-						"type": "tuple"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [],
 				"name": "getPolitics",
 				"outputs": [
@@ -371,11 +463,79 @@
 							},
 							{
 								"internalType": "bool",
+								"name": "lottery",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
 								"name": "created",
 								"type": "bool"
 							}
 						],
 						"internalType": "struct Collectible.PoliticsAvailable[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getRandomNumber",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "requestId",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getlotteryAvailable",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "id_politics",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "end_time",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "price",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "nb_player",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "ticket_available",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "created",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct Lottery.LotteryAvailable[]",
 						"name": "",
 						"type": "tuple[]"
 					}
@@ -421,6 +581,53 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"name": "onERC721Received",
+				"outputs": [
+					{
+						"internalType": "bytes4",
+						"name": "",
+						"type": "bytes4"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					}
+				],
+				"name": "onEndLottery",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "owner",
 				"outputs": [
@@ -463,6 +670,50 @@
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					}
+				],
+				"name": "playLottery",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "randomResult",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "requestId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "randomness",
+						"type": "uint256"
+					}
+				],
+				"name": "rawFulfillRandomness",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -630,16 +881,70 @@
 			}
 		],
 		"devdoc": {
+			"author": "Youness Chetoui",
 			"kind": "dev",
 			"methods": {
+				"addQty(uint256,uint256)": {
+					"params": {
+						"_id": "of PoliticsAvailable and _qty wished"
+					}
+				},
 				"approve(address,uint256)": {
 					"details": "See {IERC721-approve}."
 				},
 				"balanceOf(address)": {
 					"details": "See {IERC721-balanceOf}."
 				},
+				"buy(uint256,string)": {
+					"params": {
+						"_id": ", _tokenUri of politician available"
+					}
+				},
+				"buyPoliticsForSale(uint256)": {
+					"params": {
+						"_tokenId": "of politician for sale"
+					}
+				},
+				"cancelSell(uint256)": {
+					"params": {
+						"_tokenId": "of politician for sale"
+					}
+				},
+				"create(string,uint256,uint256,uint256,uint256,bool)": {
+					"params": {
+						"_name": ", _id, _qty, _level, _price and _lottery of politician available"
+					},
+					"returns": {
+						"_0": "PoliticsAvailable created"
+					}
+				},
+				"createLottery(uint256,uint256,uint256,uint256,uint256)": {
+					"params": {
+						"_id": ", _id_politics, _end_time, _price, _ticket_available"
+					}
+				},
+				"forSale(uint256,uint256)": {
+					"params": {
+						"_tokenId": "of politician owned and _price wished"
+					}
+				},
 				"getApproved(uint256)": {
 					"details": "See {IERC721-getApproved}."
+				},
+				"getMyPolitics()": {
+					"returns": {
+						"_0": "array of struct PoliticsOwned"
+					}
+				},
+				"getPolitics()": {
+					"returns": {
+						"_0": "Array of struct PoliticsAvailable"
+					}
+				},
+				"getlotteryAvailable()": {
+					"returns": {
+						"_0": "LotteryAvailable[] lottery"
+					}
 				},
 				"isApprovedForAll(address,address)": {
 					"details": "See {IERC721-isApprovedForAll}."
@@ -647,11 +952,24 @@
 				"name()": {
 					"details": "See {IERC721Metadata-name}."
 				},
+				"onERC721Received(address,address,uint256,bytes)": {
+					"details": "See {IERC721Receiver-onERC721Received}. Always returns `IERC721Receiver.onERC721Received.selector`."
+				},
+				"onEndLottery(uint256)": {
+					"params": {
+						"_id": "of lottery"
+					}
+				},
 				"owner()": {
 					"details": "Returns the address of the current owner."
 				},
 				"ownerOf(uint256)": {
 					"details": "See {IERC721-ownerOf}."
+				},
+				"playLottery(uint256)": {
+					"params": {
+						"_id": "of lottery"
+					}
 				},
 				"renounceOwnership()": {
 					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
@@ -674,18 +992,59 @@
 				"tokenURI(uint256)": {
 					"details": "See {IERC721Metadata-tokenURI}."
 				},
-				"transferFrom(address,address,uint256)": {
-					"details": "See {IERC721-transferFrom}."
-				},
 				"transferOwnership(address)": {
 					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
 				}
 			},
+			"title": "ERC721 collectible based on politicians",
 			"version": 1
 		},
 		"userdoc": {
 			"kind": "user",
-			"methods": {},
+			"methods": {
+				"addQty(uint256,uint256)": {
+					"notice": "Add quantity for a PoliticsAvailable"
+				},
+				"buy(uint256,string)": {
+					"notice": "Buy politician"
+				},
+				"buyPoliticsForSale(uint256)": {
+					"notice": "Buy politician"
+				},
+				"cancelSell(uint256)": {
+					"notice": "Cancel the sell of politician"
+				},
+				"create(string,uint256,uint256,uint256,uint256,bool)": {
+					"notice": "Create politician"
+				},
+				"createLottery(uint256,uint256,uint256,uint256,uint256)": {
+					"notice": "Create lottery"
+				},
+				"forSale(uint256,uint256)": {
+					"notice": "Up for sale of owned politician"
+				},
+				"getMyPolitics()": {
+					"notice": "Get politician by user"
+				},
+				"getPolitics()": {
+					"notice": "get list of all politician available"
+				},
+				"getRandomNumber()": {
+					"notice": "Requests randomness"
+				},
+				"getlotteryAvailable()": {
+					"notice": "Get all lottery available"
+				},
+				"onEndLottery(uint256)": {
+					"notice": "End lottery"
+				},
+				"playLottery(uint256)": {
+					"notice": "Play lottery"
+				},
+				"transferFrom(address,address,uint256)": {
+					"notice": "Disabled not safe transform"
+				}
+			},
 			"version": 1
 		}
 	},
@@ -693,18 +1052,42 @@
 		"compilationTarget": {
 			"contracts/PoliticsCollectible.sol": "PoliticsCollectible"
 		},
-		"evmVersion": "istanbul",
+		"evmVersion": "london",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
+		"@chainlink/contracts/src/v0.8/VRFConsumerBase.sol": {
+			"keccak256": "0x991e49ee47043d6667887d7ed6ab5a0f8e4e5550f92b09b0d75c1fb1a473cd8d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a688c48fa681a7958d5cbb4e1845290ae317e2dfa1a059faae44c69d83409414",
+				"dweb:/ipfs/Qmb5Gpjya5VJ9LnwkEBfMr5DtDH462VBjXcA6uAU2f1Vj9"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/VRFRequestIDBase.sol": {
+			"keccak256": "0x7c8dad07e6c6c9269d97fd1191ccf9c0f0068683f1f88003e688eef9373de0d9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1d88c83a359c70f6b2e2e05d8f7611cce4a3d316a65e5175e14bcf9a6ced98af",
+				"dweb:/ipfs/QmeH3BEuVvaaQsz7sN5myEnFLoabTG4j85vS9Z6rfJkads"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol": {
+			"keccak256": "0x50528c237386c55ff122d047f91b32be7abe24e9dfdc609de21cd605aae83b9a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://92037bd13b34432f9377cb205c0039bd0724af66ea605598db31d4ccd33f879f",
+				"dweb:/ipfs/QmdH6Ef5PZgcPrJuWboLX5MhmezzTFniZCwJ6fk2tYVua4"
+			]
+		},
 		"@openzeppelin/contracts/access/Ownable.sol": {
 			"keccak256": "0x6bb804a310218875e89d12c053e94a13a4607cdf7cc2052f3e52bd32a0dc50a1",
 			"license": "MIT",
@@ -737,12 +1120,28 @@
 				"dweb:/ipfs/Qmd8hXE3GZfBHuWx3RNiYgFW2ci7KvHtib8DiwzJ2dgo9V"
 			]
 		},
+		"@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol": {
+			"keccak256": "0x188d038a65a945481cc13fe30db334472dfbed61f7959d4478d05feb6303b1ea",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7aec4efa22389811ffa393463569410bbca1ecaa551bc94d69020bc9567e9277",
+				"dweb:/ipfs/QmPwk5uVSHPQkepebrZSQ9xqgXdPABKqHwJZ2HkzNByLRE"
+			]
+		},
 		"@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
 			"keccak256": "0xd32fb7f530a914b1083d10a6bed3a586f2451952fec04fe542bcc670a82f7ba5",
 			"license": "MIT",
 			"urls": [
 				"bzz-raw://af63ab940a34687c45f0ad84960b048fc5f49330c92ccb422db7822a444733b9",
 				"dweb:/ipfs/QmUShaQEu8HS1GjDnsMJQ8jkZEBrecn6NuDZ3pfjY1gVck"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol": {
+			"keccak256": "0x8756c97d6004b1ae21517a013bdec72fbf30be7852afb2f395871d280131b250",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5039c7a002cd1f4854fedf70b3d0e7a03d1ab0b51d957334beb55e50f7107e8f",
+				"dweb:/ipfs/QmRGUdXyAqzo1hh2TKx23MgXzeS9fCkEf3Gp6WwGkJu51s"
 			]
 		},
 		"@openzeppelin/contracts/utils/Address.sol": {
@@ -786,43 +1185,59 @@
 			]
 		},
 		"contracts/Collectible.sol": {
-			"keccak256": "0x2ed2aea36629ef3767874ef464439070ada85fdc123e4754af8235155ebf40ca",
+			"keccak256": "0x4715e69cbbc0fb3326168b5a64994ce2e27097061381d82c97ec1d6a795cb021",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f242bde24c6f62f5d5850dc30f714e83c4defd48b8aeb317c021588aee23b093",
-				"dweb:/ipfs/QmZEFKtKNCXAL3Qcq3apaX7fZGkbi7n1Xg9s4wwRWSC8gx"
+				"bzz-raw://7d97dc6e01a38c8319dcd94d8b8549be0310baa2196629c1cd9c1792cb49d6a1",
+				"dweb:/ipfs/QmQs6ZrVivsb2syqpPu9JTSL6JqoRsTPvHiNsRrnqPVM59"
+			]
+		},
+		"contracts/CollectibleUtils.sol": {
+			"keccak256": "0x9dd800e36ae9acfaa8aabe8360ee45c6165c574ba2c0cb51ddbfa1dfcf1beb75",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5a1761eccc8cca836841ecbf01c0f757248ab8881d3677c9c50189b52b1425c5",
+				"dweb:/ipfs/QmXbWLfs8feEa1u6985eWekXa4zaYyMmzCVAKqYAtkwAWL"
 			]
 		},
 		"contracts/Lottery.sol": {
-			"keccak256": "0x6bcdc5c4eefdcb00c75280a85f10946007cdc629c42b4967fc29b99d0d6d7faa",
+			"keccak256": "0x316a73f861801928c464a554a06067ed73a5a51563498d6b7465b9d364821f3a",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://63ac1d24330934b2eeeeb31e7f2f856dfeaf562878af728f78f1e58a4cddf94a",
-				"dweb:/ipfs/Qmbx6qxvWbABni4Ewcanmz8n8c2eYyG9X12M47XEaDdXR5"
+				"bzz-raw://55f94633bcc0f44b8d381eb818f562d23267e310fa1c339db0c35ee52a202cf3",
+				"dweb:/ipfs/QmXLA8EfdJ9hgJnMudjkiNw15EAfqUBriooZHw4XZwavDt"
 			]
 		},
-		"contracts/LotteryFactory.sol": {
-			"keccak256": "0x65352f9dabe14b9ec2370115573cc0c8e9006fd45f1c71e1bff0a7c3eac8bc59",
+		"contracts/LotteryUtils.sol": {
+			"keccak256": "0x6deddcd3ea815f66a6da06c88f0cd08daf1c5573d5d02fe2a8fa8bcfd94f30ca",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://1387463f71ad8046efe40dc5d4bac4b008ef6b0a26301d6008184cd867cb7253",
-				"dweb:/ipfs/QmUhKtB9T7WrsiS1bhQNEpcVdeHZ5hTpTD4u6V5bmKAN3M"
+				"bzz-raw://c2e36e39692110c85a3d5f5697999e23840cb931f75bfe8ad16361e122d30914",
+				"dweb:/ipfs/QmbH5wMzd5KEWhSqCMoy8KPhXN4FWAzV5QqcBdeZjxxdJc"
 			]
 		},
 		"contracts/PoliticsCollectible.sol": {
-			"keccak256": "0x3d234201abc136ae04339d9d3bca1555a62b88ab27fee70aa01361c9358e00a0",
+			"keccak256": "0xa05508877fe2f6ee2043a456c53eaa3ea713853840e808ea18d1d365548e49b8",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://75d280027921cc8d5e0d1c4ad2f7b4d0b684dbabe895af7ef94516c5060777a0",
-				"dweb:/ipfs/QmfKKjdTESU3GNo2osfupu24A6WEfPSbghVDNXUSXqLYiq"
+				"bzz-raw://a513d99cc056ac67d12ca71eda9a7d83a242f9e635216e8b55b3d1b6ee52120a",
+				"dweb:/ipfs/QmWXN36T4GUKGSFyfS8au4zs6i6Vuym7wAXjHENd6d6RQk"
+			]
+		},
+		"contracts/RandomNumberConsumer.sol": {
+			"keccak256": "0x348c2d2517f010d20e9a98c630361f39940252d5611f85baa48c65cd8aabdb1d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f03baca49031c417393d453b1ddec7bbe6b1fe7bdbb8e4874602ac539c52af47",
+				"dweb:/ipfs/QmaKKvVsPB5E67h691Yi8PF8PLNwRP9p5yEwNDyKL4VxFm"
 			]
 		},
 		"contracts/Sell.sol": {
-			"keccak256": "0x2ba1e0fcf974da8c0793b705d035f491971583d27e1d9d80ee46a926bf469f7a",
+			"keccak256": "0xe584d4739141fb327e45ba2744450fd387f6071808c3972745e318a77fa19d6e",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://95a9e48cc625276382301eb859a5e3859ef53c44b866c25f722a797f6babe51f",
-				"dweb:/ipfs/QmP6jLXYRrK4G1kvdMNLYRzPyUgiZcGK8b3X23wonzeqx8"
+				"bzz-raw://1014253f5a869234237279724921c372659cb7002a51ea2e2e413f4442ca5e28",
+				"dweb:/ipfs/QmbGjvY6ogzB4CxMCx9gZ5pbmdfCdtxFyewckZwWsqRdca"
 			]
 		}
 	},

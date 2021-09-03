@@ -11,15 +11,12 @@ import "./Lottery.sol";
 contract LotteryUtils is Lottery {
 
     /**
-    * @notice Get all lottery available
-    * @return LotteryAvailable[] lottery
+    * @notice Get stats by lottery
+    * @param _id of lottery
+    * @return uint256 ticket_available, uint256 nb_player
     */
-    function getlotteryAvailable() public view onlyOwner returns(LotteryAvailable[] memory) {
-        LotteryAvailable[] memory lotterys;
-        for(uint256 i; i < arrayLotteryAvailable.length; i++) {
-            lotterys[i] = lotteryAvailable[arrayLotteryAvailable[i]];
-        }
-
-        return lotterys;
+    function getlotteryAvailableStats(uint256 _id) public view onlyOwner returns(uint256 ticket_available, uint256 nb_player) {
+        require(lotteryAvailable[_id].created, "Lottery not found");
+        return (lotteryAvailable[_id].ticket_available, lotteryAvailable[_id].nb_player);
     }
 }

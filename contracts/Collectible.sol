@@ -13,10 +13,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
     struct PoliticsAvailable {
         uint256 id;
-        uint256 qty;
-        uint256 level;
         uint256 price;
-        string name;
         bool lottery;
         bool created;
     }
@@ -27,16 +24,18 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
         address owner;
     }
 
-    PoliticsAvailable[] internal politics;
-
     mapping(uint256 => PoliticsAvailable) internal politicsAvailable;
     mapping(address => PoliticsOwned[]) internal userOwnedPolitics;
+    mapping(uint256 => uint256) internal politicsAvailableQty;
     mapping(uint256 => address) internal politicToUser;
 
     address payable public ownerAddress;
     address payable public contractAddress;
 
     uint256 internal tokenCounter = 1;
+
+    event CreatePolitician(uint256 id);
+    event PoliticianBuy(address owner, uint256 id);
 
     constructor() ERC721("PoliticsNft", "POL") {
         ownerAddress = payable(msg.sender);
@@ -49,22 +48,20 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
     * @return PoliticsAvailable created
     */
     function create(
-        string memory _name,
         uint256 _id,
-        uint256 _qty,
-        uint256 _level,
         uint256 _price,
+        uint256 _qty,
         bool _lottery
     )
-        public onlyOwner returns (PoliticsAvailable memory) {
+        public onlyOwner {
         require(!politicsAvailable[_id].created, "id already in use");
 
         PoliticsAvailable memory politic =
-            PoliticsAvailable({name: _name, id: _id, qty: _qty, level: _level, price: _price, lottery: _lottery, created: true});
-        politics.push(politic);
+            PoliticsAvailable({id: _id, price: _price, lottery: _lottery, created: true});
+        politicsAvailableQty[_id] = _qty;
         politicsAvailable[_id] = politic;
 
-        return politic;
+        emit CreatePolitician(_id);
     }
 
     /**
@@ -74,17 +71,11 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
     function buy(uint256 _id, string memory _tokenUri) external payable {
         require(politicsAvailable[_id].created, "Politic not found");
         require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
-        require(politicsAvailable[_id].qty > 0, "There is no more politic available");
+        require(politicsAvailableQty[_id] > 0, "There is no more politic available");
         require(msg.value == ((politicsAvailable[_id].price * 10**18) / 1000), "Incorrect amount");
         PoliticsAvailable memory politic;
 
-        for (uint i = 0; i < politics.length; i++) {
-            if (politics[i].id == _id) {
-                politic = politics[i];
-                politics[i].qty--;
-                politicsAvailable[_id] = politics[i];
-            }
-        }
+        politicsAvailableQty[_id]--;
 
         uint256 id = uint256(keccak256(abi.encodePacked(tokenCounter, msg.sender))) % 10000000000;
         tokenCounter++;
@@ -98,5 +89,7 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
 
         userOwnedPolitics[msg.sender].push(politicOwned);
         politicToUser[id] = msg.sender;
+
+        emit PoliticianBuy(msg.sender, id);
     }
 }

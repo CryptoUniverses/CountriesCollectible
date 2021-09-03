@@ -11,11 +11,13 @@ import "./Collectible.sol";
 contract CollectibleUtils is Collectible {
 
     /**
-    * @notice get list of all politician available
-    * @return Array of struct PoliticsAvailable
+    * @notice get qty of politician available
+    * @param _id PoliticsAvailable
+    * @return uint256
     */
-    function getPolitics() public view onlyOwner returns (PoliticsAvailable[] memory) {
-        return politics;
+    function getPoliticQty(uint256 _id) public view onlyOwner returns (uint256) {
+        require(politicsAvailable[_id].created, "Politic not found");
+        return politicsAvailableQty[_id];
     }
 
     /**
@@ -31,12 +33,8 @@ contract CollectibleUtils is Collectible {
     * @param _id of PoliticsAvailable and _qty wished
     */
     function addQty(uint256 _id, uint256 _qty) public onlyOwner {
-        for (uint i = 0; i < politics.length; i++) {
-            if (politics[i].id == _id && politics[i].qty < _qty) {
-                politics[i].qty = _qty;
-                politicsAvailable[_id] = politics[i];
-            }
-        }
+        require(politicsAvailable[_id].created, "Politic not found");
+        politicsAvailableQty[_id] = _qty;
     }
 
     /**

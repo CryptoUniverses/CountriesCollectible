@@ -20,6 +20,9 @@ contract Sell is CollectibleUtils {
     uint256[] public arrayPoliticiansOnSale;
     uint256 internal feeSale = 5;
 
+    event CreateSale(uint256 id, address owner);
+    event BuyOnSale(uint256 id, address buyer);
+
     /**
     * @notice Up for sale of owned politician
     * @param _tokenId of politician owned and _price wished
@@ -35,6 +38,8 @@ contract Sell is CollectibleUtils {
         politicsOnSale[_tokenId] = politicOnSale;
 
         _updatePoliticianOnSale(_tokenId, true);
+
+        emit BuyOnSale(_tokenId, msg.sender);
     }
 
     /**
@@ -57,6 +62,8 @@ contract Sell is CollectibleUtils {
 
         // Delete onSale
         _updatePoliticianOnSale(_tokenId, true);
+
+        emit BuyOnSale(_tokenId, msg.sender);
     }
 
     /**
@@ -76,6 +83,10 @@ contract Sell is CollectibleUtils {
         _updatePoliticianOnSale(_tokenId, true);
     }
 
+    /**
+    * @notice Update on sale politician
+    * @param _tokenId of politician, _delete is delete or add on sale
+    */
     function _updatePoliticianOnSale(uint256 _tokenId, bool _delete) internal {
         if (_delete) {
             delete politicsOnSale[_tokenId];
