@@ -21,6 +21,8 @@
   "homepage": "https://github.com/CryptoUniverses/PoliticsCollectible#readme",
   "dependencies": {
     "@chainlink/contracts": "^0.2.1",
-    "@openzeppelin/contracts": "^4.3.0"
+    "@openzeppelin/contracts": "^4.3.0",
+    "@truffle/hdwallet-provider": "^1.5.0",
+    "web3-provider-engine": "^16.0.3"
   }
 }

@@ -37,9 +37,17 @@ contract Sell is CollectibleUtils {
 
         politicsOnSale[_tokenId] = politicOnSale;
 
-        _updatePoliticianOnSale(_tokenId, true);
+        arrayPoliticiansOnSale.push(_tokenId);
 
-        emit BuyOnSale(_tokenId, msg.sender);
+        emit CreateSale(_tokenId, msg.sender);
+    }
+
+    function test() public view returns(uint256[] memory) {
+        return arrayPoliticiansOnSale;
+    }
+
+    function you(uint256 _id) public view returns(PoliticOnSale memory) {
+        return politicsOnSale[_id];
     }
 
     /**
@@ -61,7 +69,7 @@ contract Sell is CollectibleUtils {
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
         // Delete onSale
-        _updatePoliticianOnSale(_tokenId, true);
+        _updatePoliticianOnSale(_tokenId);
 
         emit BuyOnSale(_tokenId, msg.sender);
     }
@@ -80,24 +88,20 @@ contract Sell is CollectibleUtils {
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
         // Delete onSale
-        _updatePoliticianOnSale(_tokenId, true);
+        _updatePoliticianOnSale(_tokenId);
     }
 
     /**
     * @notice Update on sale politician
-    * @param _tokenId of politician, _delete is delete or add on sale
+    * @param _tokenId of politician
     */
-    function _updatePoliticianOnSale(uint256 _tokenId, bool _delete) internal {
-        if (_delete) {
-            delete politicsOnSale[_tokenId];
+    function _updatePoliticianOnSale(uint256 _tokenId) internal {
+        delete politicsOnSale[_tokenId];
 
-            for (uint i = 0; i < arrayPoliticiansOnSale.length; i++) {
-                if (arrayPoliticiansOnSale[i] == _tokenId) {
-                    delete arrayPoliticiansOnSale[i];
-                }
+        for (uint i = 0; i < arrayPoliticiansOnSale.length; i++) {
+            if (arrayPoliticiansOnSale[i] == _tokenId) {
+                delete arrayPoliticiansOnSale[i];
             }
-        } else {
-            arrayPoliticiansOnSale.push(_tokenId);
         }
     }
 }

@@ -72,7 +72,6 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
         require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
         require(politicsAvailableQty[_id] > 0, "There is no more politic available");
         require(msg.value == ((politicsAvailable[_id].price * 10**18) / 1000), "Incorrect amount");
-        PoliticsAvailable memory politic;
 
         politicsAvailableQty[_id]--;
 
@@ -84,7 +83,7 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
         _setTokenURI(id, _tokenUri);
 
         PoliticsOwned memory politicOwned =
-            PoliticsOwned({id: id, id_politic: politic.id, owner: msg.sender});
+            PoliticsOwned({id: id, id_politic: _id, owner: msg.sender});
 
         userOwnedPolitics[msg.sender].push(politicOwned);
         politicToUser[id] = msg.sender;

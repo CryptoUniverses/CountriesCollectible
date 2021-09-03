@@ -22,6 +22,24 @@
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+const NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce-tracker")
+
+const fs = require('fs');
+
+const mnemonic = fs.readFileSync(".secret").toString().trim();
+let providerRinkeby = new HDWalletProvider({
+  mnemonic: {
+    phrase: mnemonic
+  },
+  providerOrUrl: "https://rinkeby.infura.io/v3/5f4e5b7535334db2a0436c4a3e65822b"
+});
+let providerbsc = new HDWalletProvider({
+  mnemonic: {
+    phrase: mnemonic
+  },
+  providerOrUrl: "https://data-seed-prebsc-1-s1.binance.org:8545"
+});
 
 module.exports = {
   /**
@@ -39,6 +57,27 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
+    },
+    rinkeby: {
+      provider: providerRinkeby,
+      network_id: 4,       // Ropsten's id
+      gas: 5500000,        // Ropsten has a lower block limit than mainnet
+      confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    },
+    testnet: {
+        provider: function () {
+            var wallet = new HDWalletProvider(mnemonic, `https://data-seed-prebsc-1-s1.binance.org:8545`)
+            var nonceTracker = new NonceTrackerSubprovider()
+            wallet.engine._providers.unshift(nonceTracker)
+            nonceTracker.setEngine(wallet.engine)
+            return wallet
+        },
+        network_id: 97,
+        confirmations: 10,
+        timeoutBlocks: 200,
+        skipDryRun: true
     },
     // Another network with more advanced options...
     // advanced: {
