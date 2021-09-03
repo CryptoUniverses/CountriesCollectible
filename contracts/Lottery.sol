@@ -100,7 +100,7 @@ contract Lottery is Sell, RandomNumberConsumer {
         delete lotteryAvailable[_id];
         delete userPlayedLottery[_id];
 
-        event EndLottery(_id, winner);
+        emit EndLottery(_id, winner);
     }
 
 }

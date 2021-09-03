@@ -44,8 +44,7 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
 
     /**
     * @notice Create politician
-    * @param _name, _id, _qty, _level, _price and _lottery of politician available
-    * @return PoliticsAvailable created
+    * @param _id, _qty, _price and _lottery of politician available
     */
     function create(
         uint256 _id,
