@@ -15,6 +15,7 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
         uint256 id;
         uint256 price;
         bool lottery;
+        string tokenUri;
         bool created;
     }
 
@@ -50,13 +51,14 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
         uint256 _id,
         uint256 _price,
         uint256 _qty,
-        bool _lottery
+        bool _lottery,
+        string memory _tokenUri
     )
         public onlyOwner {
         require(!politicsAvailable[_id].created, "id already in use");
 
         PoliticsAvailable memory politic =
-            PoliticsAvailable({id: _id, price: _price, lottery: _lottery, created: true});
+            PoliticsAvailable({id: _id, price: _price, lottery: _lottery, tokenUri: _tokenUri, created: true});
         politicsAvailableQty[_id] = _qty;
         politicsAvailable[_id] = politic;
 
@@ -67,7 +69,7 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
     * @notice Buy politician
     * @param _id, _tokenUri of politician available
     */
-    function buy(uint256 _id, string memory _tokenUri) external payable {
+    function buy(uint256 _id) external payable {
         require(politicsAvailable[_id].created, "Politic not found");
         require(!politicsAvailable[_id].lottery, "Politic only available with lottery");
         require(politicsAvailableQty[_id] > 0, "There is no more politic available");
@@ -80,7 +82,7 @@ contract Collectible is ERC721URIStorage, ERC721Holder, Ownable {
 
         ownerAddress.transfer(msg.value);
         _safeMint(msg.sender, id);
-        _setTokenURI(id, _tokenUri);
+        _setTokenURI(id, politicsAvailable[_id].tokenUri);
 
         PoliticsOwned memory politicOwned =
             PoliticsOwned({id: id, id_politic: _id, owner: msg.sender});
