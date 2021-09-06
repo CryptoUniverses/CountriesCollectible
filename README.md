@@ -9,7 +9,6 @@ ERC721 collectible based on the most famous real or fictitious politicians
  - transfer
 
 ## TODO
- - Test
  - Front
 
 ## Dev Memo
