@@ -10,7 +10,6 @@ contract RandomNumberConsumer is VRFConsumerBase, Ownable {
     uint256 internal fee;
 
     uint256 public randomResult;
-    bytes32 public rand;
 
     event RandomNumberCreated(uint256 randomResult);
 

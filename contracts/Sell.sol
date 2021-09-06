@@ -42,14 +42,6 @@ contract Sell is CollectibleUtils {
         emit CreateSale(_tokenId, msg.sender);
     }
 
-    function test() public view returns(uint256[] memory) {
-        return arrayPoliticiansOnSale;
-    }
-
-    function you(uint256 _id) public view returns(PoliticOnSale memory) {
-        return politicsOnSale[_id];
-    }
-
     /**
     * @notice Buy politician
     * @param _tokenId of politician for sale
