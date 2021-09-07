@@ -34,7 +34,7 @@ contract CollectibleUtils is Collectible {
     */
     function addQty(uint256 _id, uint256 _qty) public onlyOwner {
         require(countriesAvailable[_id].created, "Country not found");
-        countriesAvailable[_id] = _qty;
+        countriesAvailableQty[_id] = _qty;
     }
 
     /**
