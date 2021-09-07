@@ -11,30 +11,30 @@ import "./Collectible.sol";
 contract CollectibleUtils is Collectible {
 
     /**
-    * @notice get qty of politician available
-    * @param _id PoliticsAvailable
+    * @notice get qty of country available
+    * @param _id CountriesAvailable
     * @return uint256
     */
-    function getPoliticQty(uint256 _id) public view onlyOwner returns (uint256) {
-        require(politicsAvailable[_id].created, "Politic not found");
-        return politicsAvailableQty[_id];
+    function getCountryQty(uint256 _id) public view onlyOwner returns (uint256) {
+        require(countriesAvailable[_id].created, "Country not found");
+        return countriesAvailableQty[_id];
     }
 
     /**
-    * @notice Get politician by user
-    * @return array of struct PoliticsOwned
+    * @notice Get countries by user
+    * @return array of struct CountriesOwned
     */
-    function getMyPolitics() public view returns (PoliticsOwned[] memory) {
-        return userOwnedPolitics[msg.sender];
+    function getMyCountries() public view returns (CountriesOwned[] memory) {
+        return userOwnedCountries[msg.sender];
     }
 
     /**
-    * @notice Add quantity for a PoliticsAvailable
-    * @param _id of PoliticsAvailable and _qty wished
+    * @notice Add quantity for a CountriesAvailable
+    * @param _id of CountriesAvailable and _qty wished
     */
     function addQty(uint256 _id, uint256 _qty) public onlyOwner {
-        require(politicsAvailable[_id].created, "Politic not found");
-        politicsAvailableQty[_id] = _qty;
+        require(countriesAvailable[_id].created, "Country not found");
+        countriesAvailable[_id] = _qty;
     }
 
     /**
@@ -53,18 +53,18 @@ contract CollectibleUtils is Collectible {
         address to,
         uint256 tokenId
     ) internal override {
-        PoliticsOwned[] memory politicsFrom = userOwnedPolitics[from];
-        delete userOwnedPolitics[from];
-        for (uint i = 0; i < politicsFrom.length; i++) {
-            if (politicsFrom[i].id != tokenId) {
-                userOwnedPolitics[from].push(politicsFrom[i]);
+        CountriesOwned[] memory countriesFrom = userOwnedCountries[from];
+        delete userOwnedCountries[from];
+        for (uint i = 0; i < countriesFrom.length; i++) {
+            if (countriesFrom[i].id != tokenId) {
+                userOwnedCountries[from].push(countriesFrom[i]);
 
             } else {
-                politicsFrom[i].owner = to;
-                userOwnedPolitics[to].push(politicsFrom[i]);
+                countriesFrom[i].owner = to;
+                userOwnedCountries[to].push(countriesFrom[i]);
             }
         }
 
-        politicToUser[tokenId] = to;
+        countryToUser[tokenId] = to;
     }
 }

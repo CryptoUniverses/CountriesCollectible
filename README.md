@@ -1,6 +1,6 @@
-# PoliticsCollectible
+# CountriesCollectible
 
-ERC721 collectible based on the most famous real or fictitious politicians
+ERC721 collectible based on the countries
 
 ## Base function
  - Buy

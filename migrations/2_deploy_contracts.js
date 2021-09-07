@@ -1,5 +1,5 @@
-const PoliticsCollectible = artifacts.require("./PoliticsCollectible");
+const CountriesCollectible = artifacts.require("./CountriesCollectible");
 
 module.exports = function(deployer) {
-    deployer.deploy(PoliticsCollectible);
+    deployer.deploy(CountriesCollectible);
 };

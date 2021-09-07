@@ -8,71 +8,71 @@ import "./CollectibleUtils.sol";
 * @author Youness Chetoui
 */
 contract Sell is CollectibleUtils {
-    struct PoliticOnSale {
+    struct CountryOnSale {
         uint256 tokenId;
         uint256 price;
         address payable owner;
         bool created;
     }
 
-    mapping(uint256 => PoliticOnSale) internal politicsOnSale;
+    mapping(uint256 => CountryOnSale) internal countriesOnSale;
 
-    uint256[] public arrayPoliticiansOnSale;
+    uint256[] public arrayCountriesOnSale;
     uint256 internal feeSale = 5;
 
     event CreateSale(uint256 id, address owner);
     event BuyOnSale(uint256 id, address buyer);
 
     /**
-    * @notice Up for sale of owned politician
-    * @param _tokenId of politician owned and _price wished
+    * @notice Up for sale of owned country
+    * @param _tokenId of country owned and _price wished
     */
     function forSale(uint256 _tokenId, uint256 _price) public {
-        require(politicToUser[_tokenId] == msg.sender, "You are not the owner of the token");
+        require(countryToUser[_tokenId] == msg.sender, "You are not the owner of the token");
 
         ERC721.safeTransferFrom(msg.sender, contractAddress, _tokenId);
 
-        PoliticOnSale memory politicOnSale =
-            PoliticOnSale({tokenId: _tokenId, price: _price, owner: payable(msg.sender), created: true});
+        CountryOnSale memory countryOnSale =
+            CountryOnSale({tokenId: _tokenId, price: _price, owner: payable(msg.sender), created: true});
 
-        politicsOnSale[_tokenId] = politicOnSale;
+        countriesOnSale[_tokenId] = countryOnSale;
 
-        arrayPoliticiansOnSale.push(_tokenId);
+        arrayCountriesOnSale.push(_tokenId);
 
         emit CreateSale(_tokenId, msg.sender);
     }
 
     /**
-    * @notice Buy politician
-    * @param _tokenId of politician for sale
+    * @notice Buy country
+    * @param _tokenId of country for sale
     */
-    function buyPoliticsForSale(uint256 _tokenId) public payable {
-        require(politicsOnSale[_tokenId].created, "Politician not for sale");
-        require(msg.sender != politicsOnSale[_tokenId].owner, "Your politician");
-        require(msg.value == (politicsOnSale[_tokenId].price * 10**18) / 1000, "Incorrect amount");
+    function buyCountryForSale(uint256 _tokenId) public payable {
+        require(countriesOnSale[_tokenId].created, "Country not for sale");
+        require(msg.sender != countriesOnSale[_tokenId].owner, "Your country");
+        require(msg.value == (countriesOnSale[_tokenId].price * 10**18) / 1000, "Incorrect amount");
 
         // get 5% of fee
         uint256 feeCost = msg.value * feeSale / 100;
         uint256 amountOwner = msg.value - feeCost;
         ownerAddress.transfer(feeCost);
-        politicsOnSale[_tokenId].owner.transfer(amountOwner);
+        countriesOnSale[_tokenId].owner.transfer(amountOwner);
 
         // transfer collectible from contract to buyer
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
         // Delete onSale
-        _updatePoliticianOnSale(_tokenId);
+        _updateCountryOnSale(_tokenId);
 
         emit BuyOnSale(_tokenId, msg.sender);
     }
 
     /**
-    * @notice Cancel the sell of politician
-    * @param _tokenId of politician for sale
+    * @notice Cancel the sell of country
+    * @param _tokenId of country for sale
     */
     function cancelSell(uint256 _tokenId) public payable {
-        require(msg.sender == politicsOnSale[_tokenId].owner, "Not your politician");
-        uint256 feeCost = ((politicsOnSale[_tokenId].price * 10**18) / 1000) * feeSale /100;
+        require(msg.sender == countriesOnSale[_tokenId].owner, "Not your country");
+        uint256 feeCost = ((countriesOnSale[_tokenId].price * 10**18) / 1000) * feeSale /100;
         require(msg.value == feeCost, "Incorrect amount");
 
         ownerAddress.transfer(feeCost);
@@ -80,19 +80,19 @@ contract Sell is CollectibleUtils {
         this.safeTransferFrom(contractAddress, msg.sender, _tokenId);
 
         // Delete onSale
-        _updatePoliticianOnSale(_tokenId);
+        _updateCountryOnSale(_tokenId);
     }
 
     /**
-    * @notice Update on sale politician
-    * @param _tokenId of politician
+    * @notice Update on sale country
+    * @param _tokenId of country
     */
-    function _updatePoliticianOnSale(uint256 _tokenId) internal {
-        delete politicsOnSale[_tokenId];
+    function _updateCountryOnSale(uint256 _tokenId) internal {
+        delete countriesOnSale[_tokenId];
 
-        for (uint i = 0; i < arrayPoliticiansOnSale.length; i++) {
-            if (arrayPoliticiansOnSale[i] == _tokenId) {
-                delete arrayPoliticiansOnSale[i];
+        for (uint i = 0; i < arrayCountriesOnSale.length; i++) {
+            if (arrayCountriesOnSale[i] == _tokenId) {
+                delete arrayCountriesOnSale[i];
             }
         }
     }

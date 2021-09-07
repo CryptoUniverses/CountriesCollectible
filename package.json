@@ -1,7 +1,7 @@
 {
-  "name": "politicscollectible",
+  "name": "countriescollectible",
   "version": "0.0.1",
-  "description": "Nft of famous politics",
+  "description": "Nft of countries",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CryptoUniverses/PoliticsCollectible.git"
+    "url": "git+https://github.com/CryptoUniverses/CountriesCollectible.git"
   },
   "author": "Yose216",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/CryptoUniverses/PoliticsCollectible/issues"
+    "url": "https://github.com/CryptoUniverses/CountriesCollectible/issues"
   },
-  "homepage": "https://github.com/CryptoUniverses/PoliticsCollectible#readme",
+  "homepage": "https://github.com/CryptoUniverses/CountriesCollectible#readme",
   "dependencies": {
     "@chainlink/contracts": "^0.2.1",
     "@openzeppelin/contracts": "^4.3.0",

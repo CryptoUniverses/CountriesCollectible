@@ -11,7 +11,7 @@ import "./RandomNumberConsumer.sol";
 contract Lottery is Sell, RandomNumberConsumer {
     struct LotteryAvailable {
         uint256 id;
-        uint256 id_politics;
+        uint256 id_country;
         uint256 end_time;
         uint256 price;
         uint256 nb_player;
@@ -28,23 +28,23 @@ contract Lottery is Sell, RandomNumberConsumer {
 
     /**
     * @notice Create lottery
-    * @param _id, _id_politics, _end_time, _price, _ticket_available
+    * @param _id, _id_country, _end_time, _price, _ticket_available
     */
     function createLottery(
         uint256 _id,
-        uint256 _id_politics,
+        uint256 _id_country,
         uint256 _end_time,
         uint256 _price,
         uint256 _ticket_available
     ) public onlyOwner {
-        require(politicsAvailable[_id_politics].lottery, "Politic not available in lottery");
+        require(countriesAvailable[_id_country].lottery, "Country not available in lottery");
         require(!lotteryAvailable[_id].created, "Lottery already exist");
         require(block.timestamp < _end_time, "End time is in past");
         require(_price > 0, "Price is 0");
         require(_ticket_available >= 50, "Ticket availible under 50");
 
         LotteryAvailable memory lottery =
-            LotteryAvailable({id: _id, id_politics: _id_politics, end_time: _end_time, price: _price, ticket_available: _ticket_available, nb_player: 0, created: true});
+            LotteryAvailable({id: _id, id_country: _id_country, end_time: _end_time, price: _price, ticket_available: _ticket_available, nb_player: 0, created: true});
 
         lotteryAvailable[_id] = lottery;
 
@@ -82,7 +82,7 @@ contract Lottery is Sell, RandomNumberConsumer {
         require(lotteryAvailable[_id].created, "Lottery not available");
         require(block.timestamp > lotteryAvailable[_id].end_time, "Lottery not finished");
 
-        uint256 id_politics = lotteryAvailable[_id].id_politics;
+        uint256 id_country = lotteryAvailable[_id].id_country;
         uint256 randomIndex =  (randomResult % userPlayedLottery[_id].length) + 1;
         address winner = userPlayedLottery[_id][randomIndex];
 
@@ -91,11 +91,11 @@ contract Lottery is Sell, RandomNumberConsumer {
 
         _safeMint(winner, id);
 
-        PoliticsOwned memory politicOwned =
-            PoliticsOwned({id: id, id_politic: id_politics, owner: winner});
+        CountriesOwned memory countryOwned =
+            CountriesOwned({id: id, id_country: id_country, owner: winner});
 
-        userOwnedPolitics[winner].push(politicOwned);
-        politicToUser[id] = winner;
+        userOwnedCountries[winner].push(countryOwned);
+        countryToUser[id] = winner;
 
         delete lotteryAvailable[_id];
         delete userPlayedLottery[_id];
